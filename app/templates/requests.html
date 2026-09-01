@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Demandes{% endblock %}
+{% block greeting %}Mes demandes{% endblock %}
+{% block content %}
+<div class="card">
+  <h3 style="margin-bottom:14px; font-size:15px;">Nouvelle demande</h3>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="attestation" onclick="showTab('attestation')">Attestation</button>
+    <button class="tab-btn" data-tab="autorisation" onclick="showTab('autorisation')">Autorisation</button>
+    <button class="tab-btn" data-tab="maladie" onclick="showTab('maladie')">Absence maladie</button>
+  </div>
+
+  <div id="tab-attestation" class="tab-panel active">
+    <form method="POST">
+      <label>Type d'attestation</label>
+      <select name="type" required>
+        <option value="attestation_travail">Attestation de travail</option>
+        <option value="attestation_salaire">Attestation de salaire</option>
+      </select>
+      <button class="btn" type="submit" style="width:100%;">Envoyer la demande</button>
+    </form>
+  </div>
+
+  <div id="tab-autorisation" class="tab-panel">
+    <form method="POST">
+      <input type="hidden" name="type" value="autorisation_absence">
+      <label>Date de début</label>
+      <input type="date" name="date_debut" required>
+      <label>Date de fin</label>
+      <input type="date" name="date_fin" required>
+      <label>Motif</label>
+      <input type="text" name="motif" placeholder="Ex: rendez-vous médical, démarche administrative..." required>
+      <button class="btn" type="submit" style="width:100%;">Envoyer la demande</button>
+    </form>
+  </div>
+
+  <div id="tab-maladie" class="tab-panel">
+    <form method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="type" value="absence_maladie">
+      <label>Date de début de l'arrêt</label>
+      <input type="date" name="date_debut" required>
+      <label>Date de fin de l'arrêt</label>
+      <input type="date" name="date_fin" required>
+      <label>Précisions (optionnel)</label>
+      <input type="text" name="note" placeholder="Précisions à l'attention des RH">
+      <label>Certificat médical (photo)</label>
+      <input type="file" name="certificat" accept="image/*" capture="environment" style="padding:9px;">
+      <p style="font-size:12px; color:var(--ink-soft); margin-top:-10px;">Prenez une photo ou choisissez une image du certificat.</p>
+      <button class="btn" type="submit" style="width:100%;">Envoyer la déclaration</button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-bottom:14px; font-size:15px;">Historique</h3>
+  {% if requests %}
+  <table>
+    <tr><th>Date</th><th>Type</th><th>Détails</th><th>Statut</th></tr>
+    {% for r in requests %}
+    <tr>
+      <td>{{ r.created_at }}</td>
+      <td>
+        {% if r.type == 'attestation_travail' %}Attestation travail
+        {% elif r.type == 'attestation_salaire' %}Attestation salaire
+        {% elif r.type == 'autorisation_absence' %}Autorisation
+        {% elif r.type == 'absence_maladie' %}Maladie
+        {% endif %}
+      </td>
+      <td style="font-size:12px; color:var(--ink-soft);">
+        {% if r.date_debut %}{{ r.date_debut }} → {{ r.date_fin }}{% endif %}
+        {% if r.motif %}<br>{{ r.motif }}{% endif %}
+        {% if r.note %}<br>{{ r.note }}{% endif %}
+        {% if r.certificat_filename %}<br><a href="{{ url_for('uploaded_certificate', filename=r.certificat_filename) }}" target="_blank" style="color:var(--primary);">Voir le certificat</a>{% endif %}
+        {% if r.status == 'approved' and r.type in ('attestation_travail','attestation_salaire') %}
+        <br><a href="{{ url_for('request_pdf', request_id=r.id) }}" style="color:var(--primary);">Télécharger le PDF</a>
+        {% endif %}
+      </td>
+      <td><span class="badge badge-{{ r.status }}">{{ r.status }}</span></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p style="color:var(--ink-soft); font-size:14px;">Aucune demande pour le moment.</p>
+  {% endif %}
+</div>
+
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+</script>
+{% endblock %}

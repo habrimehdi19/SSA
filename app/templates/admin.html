@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Validation des demandes{% endblock %}
+{% block greeting %}Bonjour, {{ manager_name.split(' ')[0] }}{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="tabs">
+    <a class="tab-btn {{ 'active' if status_filter == 'pending' }}" href="{{ url_for('admin_requests', status='pending') }}">En attente</a>
+    <a class="tab-btn {{ 'active' if status_filter == 'approved' }}" href="{{ url_for('admin_requests', status='approved') }}">Approuvées</a>
+    <a class="tab-btn {{ 'active' if status_filter == 'rejected' }}" href="{{ url_for('admin_requests', status='rejected') }}">Rejetées</a>
+    <a class="tab-btn {{ 'active' if status_filter == 'all' }}" href="{{ url_for('admin_requests', status='all') }}">Toutes</a>
+  </div>
+
+  {% if requests %}
+    {% for r in requests %}
+    <div class="card card-accent" style="margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <strong>{{ r.employee_name }}</strong>
+          <div style="font-size:13px; color:var(--ink-soft);">{{ r.type_label }} · {{ r.created_at }}</div>
+        </div>
+        <span class="badge badge-{{ r.status }}">{{ r.status }}</span>
+      </div>
+
+      <div style="font-size:13px; color:var(--ink-soft); margin-top:8px;">
+        {% if r.date_debut %}Du {{ r.date_debut }} au {{ r.date_fin }}{% endif %}
+        {% if r.motif %}<br>Motif : {{ r.motif }}{% endif %}
+        {% if r.note %}<br>Note : {{ r.note }}{% endif %}
+        {% if r.certificat_filename %}
+        <br><a href="{{ url_for('admin_uploaded_certificate', filename=r.certificat_filename) }}" target="_blank">Voir le certificat médical</a>
+        {% endif %}
+      </div>
+
+      {% if r.status == 'pending' %}
+      <div style="display:flex; gap:8px; margin-top:14px;">
+        <form method="POST" action="{{ url_for('admin_approve', request_id=r.id) }}">
+          <input type="hidden" name="status_filter" value="{{ status_filter }}">
+          <button class="btn" type="submit">Approuver</button>
+        </form>
+        <form method="POST" action="{{ url_for('admin_reject', request_id=r.id) }}">
+          <input type="hidden" name="status_filter" value="{{ status_filter }}">
+          <button class="btn btn-ghost" type="submit">Rejeter</button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  {% else %}
+  <p style="color:var(--ink-soft);">Aucune demande dans cette catégorie.</p>
+  {% endif %}
+</div>
+{% endblock %}

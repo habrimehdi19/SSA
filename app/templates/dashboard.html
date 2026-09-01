@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Accueil{% endblock %}
+{% block content %}
+
+<a href="{{ url_for('agenda') }}" style="text-decoration:none;">
+  <div class="card card-accent" style="display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-size:12px; color:var(--ink-soft); font-weight:600; margin-bottom:2px;">CE MOIS-CI</div>
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:600;">Voir mon agenda</div>
+    </div>
+    <span style="color:var(--primary); font-size:20px;">→</span>
+  </div>
+</a>
+
+<div class="card">
+  <h3 style="margin-bottom:14px;">Résumé de présence {{ attendance.get('year', '') }}</h3>
+  <div style="display:flex; gap:12px;">
+    <div style="flex:1; background:var(--danger-tint); border-radius:var(--radius-sm); padding:14px; text-align:center;">
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:700; color:var(--danger);">{{ attendance.absences_count }}</div>
+      <div style="font-size:12px; color:var(--ink-soft); margin-top:2px;">Absences</div>
+    </div>
+    <div style="flex:1; background:var(--accent-tint); border-radius:var(--radius-sm); padding:14px; text-align:center;">
+      <div style="font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:700; color:#8A5C10;">{{ attendance.late_minutes_total }}</div>
+      <div style="font-size:12px; color:var(--ink-soft); margin-top:2px;">Min. de retard</div>
+    </div>
+  </div>
+
+  {% if attendance.details %}
+  <h4 style="margin-top:22px; font-size:14px;">Détails des absences</h4>
+  <table>
+    <tr><th>Date</th><th>Type</th><th>Motif</th></tr>
+    {% for d in attendance.details %}
+    <tr><td>{{ d.date }}</td><td>{{ d.type }}</td><td>{{ d.reason }}</td></tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+</div>
+{% endblock %}

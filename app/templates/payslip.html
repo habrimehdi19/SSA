@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Bulletin de paie{% endblock %}
+{% block greeting %}Bulletin de paie{% endblock %}
+{% block content %}
+<div class="card">
+  <form method="GET">
+    <label>Mois</label>
+    <input type="month" name="month" value="{{ month }}" onchange="this.form.submit()" style="margin-bottom:0;">
+  </form>
+</div>
+
+{% if payslip %}
+<div class="card card-accent">
+  <div style="font-size:12px; color:var(--ink-soft); font-weight:600; margin-bottom:2px;">NET À PAYER</div>
+  <div style="font-family:'Space Grotesk',sans-serif; font-size:30px; font-weight:700; color:var(--primary-dark);">{{ "%.2f"|format(payslip.net_salary) }} <span style="font-size:16px; font-weight:600;">{{ payslip.currency }}</span></div>
+</div>
+
+<div class="card">
+  <table>
+    <tr><td>Salaire de base</td><td style="text-align:right;">{{ "%.2f"|format(payslip.base_salary) }} {{ payslip.currency }}</td></tr>
+    <tr><td>Primes</td><td style="text-align:right;">{{ "%.2f"|format(payslip.bonuses) }} {{ payslip.currency }}</td></tr>
+    {% for label, amount in payslip.deductions.items() %}
+    <tr><td style="color:var(--ink-soft);">- {{ label }}</td><td style="text-align:right; color:var(--ink-soft);">-{{ "%.2f"|format(amount) }} {{ payslip.currency }}</td></tr>
+    {% endfor %}
+  </table>
+  <a class="btn" style="width:100%; text-align:center; margin-top:16px;" href="{{ url_for('payslip_pdf', month=month) }}">Télécharger en PDF</a>
+</div>
+{% else %}
+<div class="card" style="text-align:center; color:var(--ink-soft);">
+  Aucune donnée disponible pour ce mois.
+</div>
+{% endif %}
+{% endblock %}

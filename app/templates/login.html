@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion — Portail RH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0F5C52;
+      --surface: #FFFFFF;
+      --ink: #1E2421;
+      --ink-soft: #5C6660;
+      --line: #E4E0D3;
+      --accent: #C1841F;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(160deg, #0F5C52 0%, #0A423B 60%, #0A423B 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: var(--ink);
+    }
+    .wrap { width: 100%; max-width: 380px; }
+    .mark {
+      color: #EAF3F1;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.06em;
+      text-align: center;
+      margin-bottom: 22px;
+      opacity: 0.9;
+    }
+    .card {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 32px 26px;
+      box-shadow: 0 20px 50px rgba(10,66,59,0.35);
+    }
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+      margin: 0 0 4px;
+    }
+    .sub { color: var(--ink-soft); font-size: 13.5px; margin-bottom: 24px; }
+    label { display: block; font-size: 13px; font-weight: 500; color: var(--ink-soft); margin-bottom: 5px; }
+    input {
+      width: 100%;
+      padding: 12px 13px;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 14.5px;
+      font-family: inherit;
+    }
+    input:focus { outline: 2px solid #0F5C52; outline-offset: 1px; }
+    button {
+      width: 100%;
+      background: #0F5C52;
+      color: white;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    button:hover { background: #0A423B; }
+    .flash {
+      padding: 11px 14px; border-radius: 10px; margin-bottom: 16px;
+      font-size: 13.5px; font-weight: 500;
+      background: #F5DEE0; color: #B23A48;
+    }
+    .demo {
+      margin-top: 20px;
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      text-align: center;
+      line-height: 1.6;
+    }
+    .demo code {
+      background: #F5F2EA;
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="mark">PORTAIL RH</div>
+    <div class="card">
+      <h1>Connexion</h1>
+      <p class="sub">Accédez à votre espace employé</p>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="flash">{{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      <form method="POST">
+        <label>Nom d'utilisateur</label>
+        <input type="text" name="username" required autofocus>
+        <label>Mot de passe</label>
+        <input type="password" name="password" required>
+        <button type="submit">Se connecter</button>
+      </form>
+
+      <div class="demo">
+        Démo — <code>j.alaoui</code> ou <code>s.bennani</code><br>mot de passe : <code>demo1234</code>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
